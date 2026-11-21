@@ -1,8 +1,10 @@
 import "server-only";
 import { z } from "zod";
 
-// Treat empty strings from .env files as "not set".
-const optional = z.preprocess((v) => (v === "" ? undefined : v), z.string().optional());
+// Trim whitespace and wrapping quotes that sneak in when values are pasted into a dashboard,
+// and treat empty strings from .env files as "not set".
+const clean = (v: unknown) => (typeof v === "string" ? v.trim().replace(/^(["'])(.*)\1$/, "$2").trim() : v);
+const optional = z.preprocess((v) => (clean(v) === "" ? undefined : clean(v)), z.string().optional());
 
 const EnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
