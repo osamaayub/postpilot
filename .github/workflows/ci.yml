@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postpilot
+          POSTGRES_PASSWORD: postpilot
+          POSTGRES_DB: postpilot
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postpilot"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      SESSION_SECRET: ci-only-secret-at-least-32-characters-long
+      DATABASE_URL: postgres://postpilot:postpilot@localhost:5432/postpilot
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Smoke test against PostgreSQL 16
+        run: |
+          npm start -- -p 3000 &
+          for i in $(seq 1 30); do curl -sf http://localhost:3000/ >/dev/null && break; sleep 1; done
+          curl -sf http://localhost:3000/ | grep -q "PostPilot"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/write)" = "307"
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3000/api/generate -H 'content-type: application/json' -d '{}')" = "401"
