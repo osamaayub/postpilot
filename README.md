@@ -7,6 +7,7 @@
 Type an idea. Get a post with a strong hook, short paragraphs and a question at the end,<br>
 streamed word by word, saved to your history, ready to copy.
 
+[![Live demo](https://img.shields.io/badge/Live_demo-postpilot--osamaayub.vercel.app-000?logo=vercel)](https://postpilot-osamaayub.vercel.app)
 [![CI](https://github.com/osamaayub/postpilot/actions/workflows/ci.yml/badge.svg)](https://github.com/osamaayub/postpilot/actions/workflows/ci.yml)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-000?logo=nextdotjs)](https://nextjs.org)
 [![React 19](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)](https://react.dev)
@@ -15,7 +16,7 @@ streamed word by word, saved to your history, ready to copy.
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[**Quick start**](#-quick-start) · [Screenshots](#-screenshots) · [Architecture](#-architecture) · [API](#-api) · [Deploy](#-deploy) · [YouTube](https://www.youtube.com/@osamaayubdev)
+[**Live demo**](https://postpilot-osamaayub.vercel.app) · [Quick start](#-quick-start) · [Screenshots](#-screenshots) · [Architecture](#-architecture) · [API](#-api) · [Deploy](#-deploy) · [YouTube](https://www.youtube.com/@osamaayubdev)
 
 <br>
 
@@ -382,6 +383,18 @@ npm run check     # lint + typecheck + tests
 **On every push and pull request**, [`ci.yml`](.github/workflows/ci.yml) runs lint, typecheck, tests and a production build, then starts the app against a **PostgreSQL 16** service and smoke-tests it (home page renders, signed-out users are redirected, the API rejects anonymous calls).
 
 ## ☁️ Deploy
+
+### Live deployment
+
+**https://postpilot-osamaayub.vercel.app** runs on Vercel (region `iad1`) with a Neon PostgreSQL 17 database in `us-east-1`. Sign up with any email to try it. It auto-deploys every push to `main`.
+
+| Variable | Set to | Environments |
+| --- | --- | --- |
+| `SESSION_SECRET` | 64 random characters (sensitive) | Production, Preview |
+| `DATABASE_URL` | Neon pooled connection string (sensitive) | Production, Preview |
+| `OPENAI_MODEL` | `gpt-5-mini` | All |
+| `DAILY_POST_LIMIT` | `10` | All |
+| `OPENAI_API_KEY` | not set yet, so posts use the free demo writer | |
 
 ### Vercel + Neon (recommended, both have free tiers)
 
