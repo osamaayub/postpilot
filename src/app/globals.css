@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #14213d;
+  --muted: #5b6476;
+  --line: #e3e6ec;
+  --mark: #ffd84d;
+  --brand: #0a66c2;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-mark: var(--mark);
+  --color-brand: var(--brand);
+  --font-sans: var(--font-geist-sans);
+  --font-serif: "Source Serif 4 Variable", Georgia, serif;
+}
+
+body { background: var(--paper); color: var(--ink); }
+
+/* Highlighter on the hook line: the part readers see before "...see more". */
+.hook { background: linear-gradient(transparent 55%, color-mix(in oklab, var(--mark) 75%, transparent) 55%); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border-radius: .75rem; padding: .625rem 1rem; font-weight: 600; font-size: .875rem; transition: background .15s, opacity .15s; outline: none; }
+.btn:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 35%, transparent); }
+.btn-primary { background: var(--ink); color: white; }
+.btn-primary:hover { background: #0d1730; }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-ghost { border: 1px solid var(--line); background: var(--surface); }
+.btn-ghost:hover { background: var(--paper); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 1rem; }
+.input { width: 100%; border-radius: .75rem; border: 1px solid var(--line); background: var(--surface); padding: .7rem .9rem; font-size: .95rem; outline: none; }
+.input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 18%, transparent); }
+
+@keyframes blink { 50% { opacity: 0; } }
+.caret::after { content: ""; display: inline-block; width: 2px; height: 1.1em; margin-left: 2px; vertical-align: -0.15em; background: var(--ink); animation: blink 1s step-end infinite; }
