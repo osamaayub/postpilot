@@ -57,7 +57,7 @@ const mobile = await phone.newPage();
 await mobile.goto(`${BASE}/write`);
 await writePost(mobile, "Why I keep my pull requests small");
 await mobile.waitForTimeout(5_000);
-await mobile.getByText("Above the fold").scrollIntoViewIfNeeded();
+await mobile.getByText("show before").scrollIntoViewIfNeeded();
 await mobile.evaluate(() => window.scrollBy(0, 150));
 await mobile.screenshot({ path: `${OUT}/mobile-write.png` });
 await mobile.goto(`${BASE}/history`);
