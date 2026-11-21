@@ -2,25 +2,29 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ListIcon, PenIcon } from "@/components/icons";
 
 const LINKS = [
-  { href: "/write", label: "Write", icon: "✦" },
-  { href: "/history", label: "History", icon: "☰" },
+  { href: "/write", label: "Write", Icon: PenIcon },
+  { href: "/history", label: "History", Icon: ListIcon },
 ];
 
 function useActive() {
   const path = usePathname();
-  const active = (href: string) => path.startsWith(href);
-  const cls = (href: string) => (active(href) ? "text-ink font-semibold" : "text-muted hover:text-ink");
-  return { active, cls };
+  return (href: string) => path.startsWith(href);
 }
 
-/** Top links in the header, shown from the sm breakpoint up. */
+/** Pill tabs in the header, shown from the sm breakpoint up. */
 export function Nav() {
-  const { active, cls } = useActive();
+  const active = useActive();
   return (
-    <nav className="hidden gap-6 text-sm sm:flex" aria-label="Main">
-      {LINKS.map((l) => <Link key={l.href} href={l.href} className={cls(l.href)} aria-current={active(l.href) ? "page" : undefined}>{l.label}</Link>)}
+    <nav className="hidden items-center gap-1 rounded-xl bg-sunken p-1 text-sm sm:flex" aria-label="Main">
+      {LINKS.map(({ href, label, Icon }) => (
+        <Link key={href} href={href} aria-current={active(href) ? "page" : undefined}
+          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition ${active(href) ? "bg-surface font-semibold text-ink shadow-sm" : "text-muted hover:text-ink"}`}>
+          <Icon size={15} /> {label}
+        </Link>
+      ))}
     </nav>
   );
 }
@@ -30,12 +34,13 @@ export function Nav() {
  * backdrop-blur, and a backdrop-filter makes it the containing block for fixed children.
  */
 export function TabBar() {
-  const { active, cls } = useActive();
+  const active = useActive();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-2 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden" aria-label="Main">
-      {LINKS.map((l) => (
-        <Link key={l.href} href={l.href} className={`flex flex-col items-center gap-0.5 py-2.5 text-xs ${cls(l.href)}`} aria-current={active(l.href) ? "page" : undefined}>
-          <span aria-hidden className="text-base">{l.icon}</span>{l.label}
+    <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-2 border-t border-line bg-surface/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl sm:hidden" aria-label="Main">
+      {LINKS.map(({ href, label, Icon }) => (
+        <Link key={href} href={href} aria-current={active(href) ? "page" : undefined}
+          className={`flex flex-col items-center gap-1 py-2.5 text-xs ${active(href) ? "font-semibold text-brand" : "text-muted"}`}>
+          <Icon size={20} />{label}
         </Link>
       ))}
     </nav>

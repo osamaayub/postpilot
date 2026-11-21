@@ -1,42 +1,117 @@
 @import "tailwindcss";
 
+/* Design tokens. Light by default, dark follows the system setting. */
 :root {
-  --paper: #f6f7f9;
+  color-scheme: light;
+  --paper: #f7f7f9;
   --surface: #ffffff;
-  --ink: #14213d;
-  --muted: #5b6476;
-  --line: #e3e6ec;
+  --sunken: #f1f2f5;
+  --ink: #0b1020;
+  --muted: #5d6475;
+  --line: #e5e7ec;
   --mark: #ffd84d;
-  --brand: #0a66c2;
+  --mark-strength: 70%;
+  --brand: #4f46e5;
+  --brand-2: #7c3aed;
+  --brand-soft: #eef0ff;
+  --fill-from: #4f46e5;
+  --fill-to: #7c3aed;
+  --danger: #c2410c;
+  --shadow: 0 1px 2px rgb(11 16 32 / .04), 0 8px 24px -12px rgb(11 16 32 / .12);
+  --glow: 0 10px 30px -10px rgb(79 70 229 / .55);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #0a0b10;
+    --surface: #12141b;
+    --sunken: #1a1d27;
+    --ink: #eceef5;
+    --muted: #9aa1b3;
+    --line: #262a36;
+    --mark: #facc15;
+    --mark-strength: 28%;
+    --brand: #818cf8;
+    --brand-2: #a78bfa;
+    --brand-soft: rgb(129 140 248 / .12);
+    --fill-from: #5b54e8;
+    --fill-to: #8048e8;
+    --danger: #fb923c;
+    --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 12px 32px -16px rgb(0 0 0 / .7);
+    --glow: 0 10px 30px -10px rgb(129 140 248 / .45);
+  }
 }
 
 @theme inline {
   --color-paper: var(--paper);
   --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-mark: var(--mark);
   --color-brand: var(--brand);
+  --color-brand-2: var(--brand-2);
+  --color-brand-soft: var(--brand-soft);
+  --color-fill-from: var(--fill-from);
+  --color-fill-to: var(--fill-to);
+  --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
   --font-serif: "Source Serif 4 Variable", Georgia, serif;
 }
 
-body { background: var(--paper); color: var(--ink); }
+body { background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; }
+::selection { background: color-mix(in oklab, var(--brand) 25%, transparent); }
 
-/* Highlighter on the hook line: the part readers see before "...see more". */
-.hook { background: linear-gradient(transparent 55%, color-mix(in oklab, var(--mark) 75%, transparent) 55%); }
+/* Component classes live in the components layer so Tailwind utilities (hidden, pl-9, ...) can override them. */
+@layer components {
+/* Signature: a highlighter on the hook line, the part readers see before "...see more". */
+.hook { background: linear-gradient(transparent 52%, color-mix(in oklab, var(--mark) var(--mark-strength), transparent) 52%); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.text-gradient { background: linear-gradient(100deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border-radius: .75rem; padding: .625rem 1rem; font-weight: 600; font-size: .875rem; transition: background .15s, opacity .15s; outline: none; }
-.btn:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 35%, transparent); }
-.btn-primary { background: var(--ink); color: white; }
-.btn-primary:hover { background: #0d1730; }
-.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
-.btn-ghost { border: 1px solid var(--line); background: var(--surface); }
-.btn-ghost:hover { background: var(--paper); }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 1rem; }
-.input { width: 100%; border-radius: .75rem; border: 1px solid var(--line); background: var(--surface); padding: .7rem .9rem; font-size: .95rem; outline: none; }
-.input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 18%, transparent); }
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border-radius: .75rem; padding: .6rem 1rem; font-weight: 600; font-size: .875rem; line-height: 1.25rem; white-space: nowrap; transition: background-color .15s, border-color .15s, color .15s, box-shadow .15s, transform .1s, opacity .15s; outline: none; }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover:not(:disabled) { background: color-mix(in oklab, var(--ink) 85%, var(--brand)); }
+.btn-accent { color: white; background: linear-gradient(135deg, var(--fill-from), var(--fill-to)); box-shadow: var(--glow); }
+.btn-accent:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-ghost { border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.btn-ghost:hover:not(:disabled) { background: var(--sunken); }
+.btn-quiet { color: var(--muted); padding: .5rem .65rem; }
+.btn-quiet:hover:not(:disabled) { color: var(--ink); background: var(--sunken); }
+.btn-lg { padding: .8rem 1.25rem; font-size: .95rem; border-radius: .9rem; }
 
+/* Surfaces */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 1.25rem; box-shadow: var(--shadow); }
+.input { width: 100%; border-radius: .85rem; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: .7rem .9rem; font-size: .95rem; outline: none; transition: border-color .15s, box-shadow .15s; }
+.input::placeholder { color: color-mix(in oklab, var(--muted) 75%, transparent); }
+.input:focus { border-color: var(--brand); box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand) 16%, transparent); }
+.kbd { display: inline-flex; align-items: center; border: 1px solid color-mix(in oklab, currentColor 30%, transparent); border-radius: .35rem; padding: 0 .3rem; font-size: .7rem; font-weight: 500; line-height: 1.1rem; opacity: .85; }
+.chip { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); padding: .3rem .75rem; font-size: .75rem; color: var(--muted); transition: border-color .15s, color .15s, background-color .15s; }
+.chip:hover { color: var(--ink); border-color: color-mix(in oklab, var(--brand) 45%, var(--line)); }
+.chip[aria-pressed="true"] { color: var(--brand); border-color: color-mix(in oklab, var(--brand) 50%, var(--line)); background: var(--brand-soft); }
+
+/* Decorative backgrounds */
+.bg-grid { background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 44px 44px; mask-image: radial-gradient(ellipse at 50% 0%, black 30%, transparent 75%); }
+.bg-glow { background: radial-gradient(600px 300px at 50% 0%, color-mix(in oklab, var(--brand) 22%, transparent), transparent 70%), radial-gradient(400px 240px at 85% 20%, color-mix(in oklab, var(--brand-2) 16%, transparent), transparent 70%); }
+
+/* Motion */
 @keyframes blink { 50% { opacity: 0; } }
-.caret::after { content: ""; display: inline-block; width: 2px; height: 1.1em; margin-left: 2px; vertical-align: -0.15em; background: var(--ink); animation: blink 1s step-end infinite; }
+.caret::after { content: ""; display: inline-block; width: 2px; height: 1.1em; margin-left: 2px; vertical-align: -0.15em; background: var(--brand); animation: blink 1s step-end infinite; }
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+.skeleton { position: relative; overflow: hidden; border-radius: .5rem; background: var(--sunken); }
+.skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--surface) 70%, transparent), transparent); animation: shimmer 1.4s infinite; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise .5s cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes float { 50% { transform: translateY(-6px); } }
+.float { animation: float 6s ease-in-out infinite; }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

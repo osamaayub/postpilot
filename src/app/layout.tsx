@@ -9,14 +9,14 @@ export const metadata: Metadata = {
   description: "Turn an idea into a LinkedIn post with a strong hook. Built with Next.js 16, PostgreSQL and the OpenAI Responses API.",
 };
 
-export const viewport: Viewport = { themeColor: "#f6f7f9" };
+export const viewport: Viewport = { themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f7f7f9" }, { media: "(prefers-color-scheme: dark)", color: "#0a0b10" }] };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={GeistSans.variable}>
       <body className="min-h-dvh font-sans antialiased">
         {children}
-        <Toaster position="bottom-center" richColors closeButton mobileOffset={{ bottom: 88 }} />
+        <Toaster position="bottom-center" theme="system" richColors closeButton mobileOffset={{ bottom: 96 }} toastOptions={{ style: { borderRadius: "14px" } }} />
       </body>
     </html>
   );
