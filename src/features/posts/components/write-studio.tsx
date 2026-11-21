@@ -8,6 +8,7 @@ import { LENGTHS, TONES, TOPIC_MAX, TOPIC_MIN, type Length, type Tone } from "..
 import { SAVED_MARKER } from "../marker";
 import { updatePost } from "../actions";
 import { PostPreview } from "./post-preview";
+import { PostScorePanel } from "./post-score";
 
 const IDEAS = ["What I learned shipping my first SaaS", "Why I write tests before fixing bugs", "How I price freelance projects", "Server Actions vs API routes"];
 const TONE_HINT: Record<Tone, string> = { practical: "Tips and steps", story: "A lesson learned", bold: "One strong opinion", friendly: "Warm and casual" };
@@ -30,11 +31,13 @@ function Segmented<T extends string>({ label, options, value, onChange, hints }:
   );
 }
 
-export function WriteStudio({ name, remaining, limit }: { name: string; remaining: number; limit: number }) {
+type Props = { name: string; headline?: string | null; defaultTone?: Tone; defaultLength?: Length; remaining: number; limit: number };
+
+export function WriteStudio({ name, headline, defaultTone = "practical", defaultLength = "medium", remaining, limit }: Props) {
   const router = useRouter();
   const [topic, setTopic] = useState("");
-  const [tone, setTone] = useState<Tone>("practical");
-  const [length, setLength] = useState<Length>("medium");
+  const [tone, setTone] = useState<Tone>(defaultTone);
+  const [length, setLength] = useState<Length>(defaultLength);
   const [body, setBody] = useState("");
   const [postId, setPostId] = useState<string | null>(null);
   const [streaming, setStreaming] = useState(false);
@@ -149,7 +152,7 @@ export function WriteStudio({ name, remaining, limit }: { name: string; remainin
         </div>
         {editing
           ? <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={14} className="input font-serif text-[1.05rem] leading-relaxed" aria-label="Edit post" />
-          : <PostPreview name={name} body={body} streaming={streaming} />}
+          : <PostPreview name={name} headline={headline} body={body} streaming={streaming} />}
         {body && !streaming && (
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={copy} className="btn btn-primary">{copied ? <CheckIcon /> : <CopyIcon />} Copy</button>
@@ -159,6 +162,7 @@ export function WriteStudio({ name, remaining, limit }: { name: string; remainin
             <button type="button" onClick={generate} disabled={!canGenerate} className="btn btn-ghost"><RefreshIcon /> Try again</button>
           </div>
         )}
+        {body && !streaming && <PostScorePanel body={body} />}
       </section>
     </div>
   );

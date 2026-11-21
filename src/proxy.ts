@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE, verifySessionToken } from "@/features/auth/server/token";
 
-const APP = ["/write", "/history"];
+const APP = ["/write", "/history", "/settings"];
 const AUTH = ["/login", "/signup"];
 
 /** Fast, optimistic redirect only (no database). The real check is getCurrentUser() on the server. */
@@ -13,4 +13,4 @@ export async function proxy(req: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = { matcher: ["/write/:path*", "/history/:path*", "/login", "/signup"] };
+export const config = { matcher: ["/write/:path*", "/history/:path*", "/settings/:path*", "/login", "/signup"] };

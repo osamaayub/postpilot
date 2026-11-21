@@ -8,7 +8,7 @@ import { foldPost } from "../domain/fold";
  * Shows the post the way the LinkedIn feed does: about three lines, then
  * "...see more". The hook is highlighted because it is all most people read.
  */
-export function PostPreview({ name, body, streaming = false, initialOpen = false }: { name: string; body: string; streaming?: boolean; initialOpen?: boolean }) {
+export function PostPreview({ name, headline, body, streaming = false, initialOpen = false }: { name: string; headline?: string | null; body: string; streaming?: boolean; initialOpen?: boolean }) {
   const [open, setOpen] = useState(initialOpen);
   const { visible, hidden, folded } = foldPost(body);
   const [hook, ...rest] = visible.split("\n");
@@ -21,7 +21,7 @@ export function PostPreview({ name, body, streaming = false, initialOpen = false
         <span className="grid size-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-fill-from to-fill-to text-sm font-semibold text-white" aria-hidden>{initials}</span>
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">{name}</p>
-          <p className="text-xs text-muted">Full-stack developer · now · 🌐</p>
+          <p className="truncate text-xs text-muted">{headline || "Full-stack developer"} · now · 🌐</p>
         </div>
       </header>
 

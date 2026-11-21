@@ -61,11 +61,14 @@ It is also a **reference project** for building a production-style AI feature in
 | **Streaming AI** | Posts stream into the page as the OpenAI Responses API writes them. Press **Stop** at any time |
 | **Feed preview** | The post is shown the way the LinkedIn feed shows it: three lines, then **...see more**. The hook is highlighted and the preview counts the characters above the fold |
 | **Tone and length** | Practical, story, bold or friendly; short, medium or long. Starter ideas for a quick first post |
-| **History** | Every finished post is saved. Edit (optimistic update), copy, or delete with a 5 second **Undo** |
+| **History** | Every finished post is saved. Search, filter by tone, edit (optimistic update), copy, or delete with a 5 second **Undo** |
+| **Post score** | A live 0 to 100 score with a checklist: hook under 12 words, fits before "see more", short paragraphs, ends with a question, readable length, three hashtags or fewer. Pure function, no AI call |
+| **Profile** | Name, LinkedIn headline (shown under your name in every preview), and default tone and length for the Write page |
+| **Writing stats** | Posts written, posts this week, average score and favourite tone, on the History page |
 | **Fair daily limit** | 10 posts per user per day (configurable), enforced by one atomic PostgreSQL upsert. A failed or stopped generation gives the credit back |
 | **Auth** | Email and password sign-up with bcrypt, a signed JWT in an `httpOnly` cookie, and a server-side check on every page, action and API call |
 | **Zero-setup demo** | No database? It runs on PGlite (PostgreSQL compiled to WebAssembly) with a demo account. No OpenAI key? A free demo writer streams a sample post |
-| **Works on phones** | Responsive layout with a bottom tab bar on small screens |
+| **Dark mode and phones** | Follows the system theme; responsive layout with a bottom tab bar on small screens |
 
 ## 📸 Screenshots
 
@@ -252,6 +255,9 @@ erDiagram
     text name
     text email UK
     text password_hash
+    text headline
+    text default_tone
+    text default_length
     timestamptz created_at
   }
   posts {
@@ -321,6 +327,7 @@ src/
     (auth)/login, signup         Auth pages
     (app)/layout.tsx             Signed-in shell: header, nav, mobile tab bar
     (app)/write, history         The app
+    (app)/settings               Profile: name, headline, defaults
     api/generate/route.ts        Streaming endpoint
   features/
     auth/
@@ -330,7 +337,7 @@ src/
                                  user-repository, current-user (the auth check)
       components/auth-form.tsx
     posts/
-      domain/fold.ts, prompt.ts  Pure functions
+      domain/                    Pure functions: fold, prompt, score, writer errors
       ports.ts                   PostStore, PostWriter, DailyLimiter, Clock
       service.ts                 Business rules (framework-free)
       repository.ts              Drizzle PostStore, scoped to the owner
@@ -379,6 +386,10 @@ npm run check     # lint + typecheck + tests
 | `post-service.test.ts` | Streaming, saving, the daily limit, credit refund on AI errors and on Stop, owner-only edits |
 | `token.test.ts` | Session tokens reject other secrets, garbage and missing values |
 | `database.test.ts` | On real PostgreSQL (PGlite): 10 requests at once never exceed a limit of 3; every query is owner-scoped |
+| `score.test.ts` | The post score rewards a well-shaped post and explains every failed check |
+| `profile.test.ts` | Profile input is trimmed and validated; an empty headline falls back to the default |
+| `writer-error.test.ts` | OpenAI errors map to clear codes (bad key, quota, model, unavailable); aborts pass through |
+| `env.test.ts` | Pasted environment values are trimmed of spaces and quotes |
 
 **On every push and pull request**, [`ci.yml`](.github/workflows/ci.yml) runs lint, typecheck, tests and a production build, then starts the app against a **PostgreSQL 16** service and smoke-tests it (home page renders, signed-out users are redirected, the API rejects anonymous calls).
 

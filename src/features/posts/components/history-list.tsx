@@ -7,6 +7,7 @@ import { CheckIcon, CopyIcon, PenIcon, SearchIcon, SparkIcon, TrashIcon } from "
 import { deletePost, updatePost } from "../actions";
 import { foldPost } from "../domain/fold";
 import { TONES } from "../schemas";
+import { ScoreBadge } from "./post-score";
 
 type Item = { id: string; topic: string; tone: string; length: string; body: string; createdAt: string };
 const UNDO_MS = 5000;
@@ -52,6 +53,7 @@ function HistoryCard({ item, onDelete }: { item: Item; onDelete: (item: Item) =>
         <span className="rounded-full bg-brand-soft px-2 py-0.5 font-medium capitalize text-brand">{item.tone}</span>
         <span className="rounded-full bg-sunken px-2 py-0.5 capitalize">{item.length}</span>
         <span className="ml-auto tabular-nums">{words} words</span>
+        <ScoreBadge body={body} />
       </div>
       <p className="mb-2 line-clamp-1 text-sm font-semibold">{item.topic}</p>
       {editing ? (

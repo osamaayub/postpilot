@@ -31,6 +31,7 @@ export const ShieldIcon = make(<><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-
 export const GaugeIcon = make(<><path d="M12 14l4-4" /><path d="M3.3 17a9 9 0 1117.4 0" /></>, "GaugeIcon");
 export const UndoIcon = make(<><path d="M9 14L4 9l5-5" /><path d="M4 9h10.5a5.5 5.5 0 010 11H11" /></>, "UndoIcon");
 export const FoldIcon = make(<><path d="M3 6h18M3 12h12M3 18h7" /><path d="M17 15l3 3-3 3" /></>, "FoldIcon");
+export const UserIcon = make(<><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0116 0" /></>, "UserIcon");
 export const CodeIcon = make(<><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" /></>, "CodeIcon");
 export const GitHubIcon = ({ size = 16, ...props }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>

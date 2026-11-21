@@ -15,7 +15,7 @@ export default async function WritePage() {
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Write a post</h1>
         <p className="mt-2 text-muted">Hi {first}. Give PostPilot an idea and it writes the hook, the body and the question at the end.</p>
       </div>
-      <WriteStudio name={user.name} remaining={remaining} limit={limit} />
+      <WriteStudio name={user.name} headline={user.headline} defaultTone={user.defaultTone} defaultLength={user.defaultLength} remaining={remaining} limit={limit} />
     </>
   );
 }

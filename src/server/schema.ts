@@ -5,6 +5,10 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
+  // Profile: shown in the post preview and used as defaults on the Write page.
+  headline: text("headline"),
+  defaultTone: text("default_tone").notNull().default("practical"),
+  defaultLength: text("default_length").notNull().default("medium"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

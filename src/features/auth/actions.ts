@@ -1,9 +1,12 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { ActionState } from "@/lib/result";
 import { logger } from "@/lib/logger";
+import { ProfileSchema } from "./profile";
 import { LoginSchema, SignupSchema } from "./schemas";
+import { getCurrentUser } from "./server/current-user";
 import { hashPassword, verifyPassword } from "./server/password";
 import { createSession, destroySession } from "./server/session";
 import { userRepository } from "./server/user-repository";
@@ -36,4 +39,17 @@ export async function login(_: AuthState, formData: FormData): Promise<AuthState
 export async function logout() {
   await destroySession();
   redirect("/");
+}
+
+export type ProfileState = ActionState<{ name: string; headline: string; defaultTone: string; defaultLength: string }>;
+
+export async function updateProfile(_: ProfileState, formData: FormData): Promise<ProfileState> {
+  const user = await getCurrentUser(); // never trust the client
+  const fields = { name: String(formData.get("name") ?? ""), headline: String(formData.get("headline") ?? ""), defaultTone: String(formData.get("defaultTone") ?? ""), defaultLength: String(formData.get("defaultLength") ?? "") };
+  const parsed = ProfileSchema.safeParse(fields);
+  if (!parsed.success) return { status: "error", message: parsed.error.issues[0].message, fields };
+  await userRepository.updateProfile(user.id, parsed.data);
+  logger.info("user.profile_updated", { userId: user.id });
+  revalidatePath("/", "layout"); // header name, preview headline and Write defaults
+  return { status: "success", message: "Profile saved" };
 }

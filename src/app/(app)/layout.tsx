@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LogoutIcon } from "@/components/icons";
 import { Logo } from "@/components/logo";
 import { logout } from "@/features/auth/actions";
@@ -15,10 +16,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-6"><Logo href="/write" /><Nav /></div>
           <div className="flex items-center gap-2 sm:gap-3">
             {isDemoWriter() && <span className="hidden rounded-full border border-amber-300/70 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 md:inline dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300" title="No OpenAI key set: posts come from the free demo writer">Demo AI</span>}
-            <span className="hidden items-center gap-2 text-sm sm:flex">
+            <Link href="/settings" className="hidden items-center gap-2 rounded-xl py-1 pr-2 pl-1 text-sm hover:bg-sunken sm:flex" title="Edit your profile">
               <span className="grid size-8 place-items-center rounded-full bg-gradient-to-br from-fill-from to-fill-to text-xs font-semibold text-white" aria-hidden>{initials}</span>
               <span className="max-w-32 truncate text-muted">{user.name}</span>
-            </span>
+            </Link>
             <form action={logout}><button className="btn btn-quiet" aria-label="Log out"><LogoutIcon /> <span className="hidden sm:inline">Log out</span></button></form>
           </div>
         </div>
