@@ -2,7 +2,7 @@ import { Logo } from "@/components/logo";
 import { logout } from "@/features/auth/actions";
 import { getCurrentUser } from "@/features/auth/server/current-user";
 import { isDemoWriter } from "@/features/posts/server";
-import { Nav } from "./nav";
+import { Nav, TabBar } from "./nav";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -19,6 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">{children}</main>
+      <TabBar />
     </div>
   );
 }
