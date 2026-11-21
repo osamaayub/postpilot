@@ -17,7 +17,10 @@ export function postService(): Promise<PostService> {
       writer: getWriter(),
       limiter: postgresDailyLimiter(db),
       dailyLimit: env().DAILY_POST_LIMIT,
-      onError: (error, ctx) => logger.error("post.generate_failed", { ...ctx, error: String(error) }),
+      onError: (error, ctx) => {
+        const cause = error instanceof Error ? (error.cause as { status?: unknown; message?: unknown } | undefined) : undefined;
+        logger.error("post.generate_failed", { ...ctx, error: String(error), providerStatus: cause?.status, providerMessage: typeof cause?.message === "string" ? cause.message.slice(0, 300) : undefined });
+      },
     }),
   );
   return g.__postService;

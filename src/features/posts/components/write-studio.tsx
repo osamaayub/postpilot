@@ -51,7 +51,7 @@ export function WriteStudio({ name, remaining, limit }: { name: string; remainin
       const res = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ topic, tone, length }), signal: controller.signal });
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({ message: "Something went wrong. Please try again." }));
-        toast.error(data.message);
+        toast.error(res.status >= 502 ? `${data.message} You were not charged a credit.` : data.message);
         return;
       }
       const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();

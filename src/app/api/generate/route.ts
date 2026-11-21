@@ -1,4 +1,5 @@
 import { findCurrentUser } from "@/features/auth/server/current-user";
+import { isWriterError } from "@/features/posts/domain/writer-error";
 import { postService } from "@/features/posts/server";
 
 /**
@@ -14,9 +15,26 @@ export async function POST(req: Request) {
   const result = await service.generate(user.id, body, req.signal);
   if (!result.ok) return Response.json({ message: result.message }, { status: result.error === "LIMIT_REACHED" ? 429 : 400 });
 
-  const encoder = new TextEncoder();
+  // Wait for the first chunk before answering, so a rejected AI request becomes a clear
+  // JSON error (the credit is already given back) instead of a broken stream.
   const iterator = result.value[Symbol.asyncIterator]();
+  let first: IteratorResult<string>;
+  try {
+    first = await iterator.next();
+  } catch (error) {
+    const known = isWriterError(error);
+    return Response.json(
+      { message: known ? error.message : "The AI request failed. Please try again.", code: known ? error.code : "UNKNOWN" },
+      { status: known && error.code === "UNAVAILABLE" ? 503 : 502 },
+    );
+  }
+
+  const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      if (first.done) controller.close();
+      else controller.enqueue(encoder.encode(first.value));
+    },
     async pull(controller) {
       try {
         const { value, done } = await iterator.next();
