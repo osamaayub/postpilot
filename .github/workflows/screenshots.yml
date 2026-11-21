@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["src/**", "scripts/screenshots.mjs"]
+    paths: ["src/**", "scripts/screenshots.mjs", ".github/workflows/screenshots.yml"]
 
 permissions:
   contents: write
@@ -44,4 +44,5 @@ jobs:
           git add docs
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "docs: update screenshots [skip ci]"
+          git pull --rebase origin main   # main may have moved while we were capturing
           git push
